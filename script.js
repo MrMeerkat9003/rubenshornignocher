@@ -7,7 +7,7 @@
 
 // Photos Ruben1.jpeg–Ruben47.jpeg are included in the initial library.
 // Ruben48.jpeg and higher are detected automatically, in sequence.
-const TOTAL_PHOTOS = 47;
+const TOTAL_PHOTOS = 75;
 const MAX_AUTO_PHOTO = 2000;
 
 // Set custom names here; everything else becomes "Photo 002", etc.
