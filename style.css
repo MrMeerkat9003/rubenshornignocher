@@ -375,63 +375,35 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
     writing-mode: vertical-rl;
 }
 
-
-/* ========================================
-   INFINITE COLLECTION MARQUEE
-======================================== */
-
 .marquee {
-    width: 100%;
     overflow: hidden;
     background: var(--orange);
-    color: #1c130e;
     padding: 18px 0;
+    white-space: nowrap;
+    font-weight: 700;
+    color: #1c130e;
 }
 
 .marquee-track {
-    display: flex;
     width: max-content;
-    animation: marquee-scroll 25s linear infinite;
-    will-change: transform;
+    animation: marquee 40s linear infinite;
 }
 
-.marquee-content {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    white-space: nowrap;
-}
-
-.marquee-content span {
-    font-family: var(--mono);
+.marquee-track span {
     font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    word-spacing: 25px;
+    letter-spacing: .16em;
+    word-spacing: 30px;
 }
 
-@keyframes marquee-scroll {
-    from {
-        transform: translateX(0);
-    }
+.marquee b {
+    font-size: 20px;
+}
 
+@keyframes marquee {
     to {
         transform: translateX(-50%);
     }
 }
-
-/* Optional: Pause when hovering */
-.marquee:hover .marquee-track {
-    animation-play-state: paused;
-}
-
-/* Respect reduced-motion settings */
-@media (prefers-reduced-motion: reduce) {
-    .marquee-track {
-        animation: none;
-    }
-}
-
 
 @media(prefers-reduced-motion:reduce) {
     *,*:before,*:after {
@@ -2229,3 +2201,56 @@ img { max-width: 100%; }
 .video-dialog-bottom > div { display: flex; gap: 9px; }
 @media (max-width: 950px) { .videos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .videos-empty { grid-template-columns: 1fr; } .videos-empty-visual { max-width: none; aspect-ratio: 16 / 7; } }
 @media (max-width: 600px) { .videos-heading { align-items: start; margin: 35px 0 26px; } .videos-heading h2 { font-size: clamp(49px, 13vw, 70px); } .videos-heading p { font-size: 14px; } .videos-total { flex-direction: column; align-items: end; gap: 0; } .videos-total strong { font-size: 40px; } .videos-total span { text-align: right; font-size: 9px; } .videos-grid { grid-template-columns: 1fr; } .videos-empty { padding: 18px; gap: 22px; } .videos-empty-visual { aspect-ratio: 16 / 10; border-width: 5px; } .videos-play-symbol { width: 60px; height: 60px; font-size: 22px; } .videos-empty h3 { font-size: 37px; } .videos-toolbar { flex-wrap: wrap; } .video-search-field { max-width: none; } .video-dialog-top strong { font-size: 14px; } .video-dialog-top button, .video-dialog-bottom button { padding: 10px 12px; } .video-dialog-bottom { flex-wrap: wrap; } }
+
+
+/* Infinite collection marquee — two identical horizontal strips for a seamless loop. */
+.marquee {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding-block: 16px;
+    background: var(--orange);
+    color: #1c130e;
+}
+
+.marquee-track {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+    will-change: transform;
+}
+
+.marquee-group {
+    display: flex;
+    flex: 0 0 auto;
+    flex-flow: row nowrap;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.marquee-item {
+    display: inline-block;
+    flex: 0 0 auto;
+    padding-right: 2.4rem;
+    font-family: var(--mono);
+    font-size: clamp(12px, 1.2vw, 15px);
+    font-weight: 700;
+    letter-spacing: .14em;
+    white-space: nowrap;
+}
+
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+@media (max-width: 530px) {
+    .marquee { padding-block: 12px; }
+    .marquee-item { padding-right: 1.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; will-change: auto; }
+}
