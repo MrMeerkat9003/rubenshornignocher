@@ -680,7 +680,7 @@ if ('IntersectionObserver' in window && !reducedMotion) {
         { rootMargin: '-28% 0px -65% 0px' }
     );
 
-    ['home', 'story', 'collection', 'moments', 'submit-photo'].forEach(id => {
+    ['home', 'story', 'collection', 'moments', 'videos', 'submit-photo'].forEach(id => {
         navObserver.observe($(id));
     });
 } else {
@@ -931,3 +931,168 @@ photoForm.addEventListener('submit', async event => {
         photoSendButton.innerHTML = photoSendButtonHtml;
     }
 });
+
+
+/* ============================================================
+   VIDEO ARCHIVE — GitHub Pages compatible
+   ============================================================
+
+   Place videos/Video1.mp4, videos/Video2.mp4, and so on into
+   the repository. The site automatically checks for the next
+   sequential video on each visit. Missing numbers stop detection.
+
+   Optional custom titles and poster images can be configured here.
+   A poster uses a photo already present in images/ by default.
+   MP4 (H.264/AAC) is recommended for widest device support.
+*/
+
+const VIDEO_MAX_AUTO = 250;
+const videoDetails = {
+    // 1: { title: 'First clip', description: 'A moment on film.', poster: 'images/Ruben6.jpeg' },
+    // 2: { title: 'Another clip', poster: 'images/Ruben12.jpeg' },
+};
+
+const videos = [];
+let currentVideoIndex = 0;
+let videoSearchQuery = '';
+let videoSort = 'newest';
+const videoDialog = $('video-dialog');
+const videoPlayer = $('video-player');
+
+function videoLabel(number) {
+    return String(number).padStart(Math.max(3, String(number).length), '0');
+}
+
+function buildVideo(number, extension) {
+    const details = videoDetails[number] || {};
+    return {
+        number,
+        title: details.title || `Video ${videoLabel(number)}`,
+        description: details.description || 'From the Ruben video archive.',
+        poster: details.poster || `images/Ruben${Math.min(number, 75)}.jpeg`,
+        src: `videos/Video${number}.${extension}`,
+    };
+}
+
+function visibleVideos() {
+    return videos
+        .filter(video => (`${video.title} ${video.description} video${video.number}`)
+            .toLowerCase().includes(videoSearchQuery))
+        .sort((a, b) => videoSort === 'newest' ? b.number - a.number : a.number - b.number);
+}
+
+function renderVideoGallery() {
+    const grid = $('videos-grid');
+    const visible = visibleVideos();
+    const fragment = document.createDocumentFragment();
+
+    $('videos-count').textContent = String(videos.length).padStart(2, '0');
+    $('videos-empty').hidden = videos.length !== 0;
+    $('videos-toolbar').hidden = videos.length === 0;
+    $('videos-result').hidden = videos.length === 0 || visible.length !== 0;
+    $('videos-result').textContent = visible.length ? '' : 'No videos match your search.';
+
+    for (const video of visible) {
+        const card = document.createElement('article');
+        card.className = 'video-card';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'video-card-open';
+        button.setAttribute('aria-label', `Play ${video.title}`);
+        const thumb = document.createElement('span');
+        thumb.className = 'video-thumb';
+        const poster = document.createElement('img');
+        poster.src = video.poster;
+        poster.alt = '';
+        poster.loading = 'lazy';
+        const play = document.createElement('span');
+        play.className = 'video-card-play';
+        play.textContent = '▶';
+        play.setAttribute('aria-hidden', 'true');
+        const id = document.createElement('span');
+        id.className = 'video-card-id';
+        id.textContent = `CLIP / ${videoLabel(video.number)}`;
+        thumb.append(poster, play, id);
+        const details = document.createElement('span');
+        details.className = 'video-card-details';
+        const title = document.createElement('strong');
+        title.textContent = video.title;
+        const description = document.createElement('small');
+        description.textContent = video.description;
+        const arrow = document.createElement('span');
+        arrow.textContent = '↗';
+        arrow.setAttribute('aria-hidden', 'true');
+        details.append(title, description, arrow);
+        button.append(thumb, details);
+        button.addEventListener('click', () => openVideo(videos.indexOf(video)));
+        card.append(button);
+        fragment.append(card);
+    }
+
+    grid.replaceChildren(fragment);
+}
+
+function openVideo(index) {
+    if (!videos.length) return;
+    currentVideoIndex = (index + videos.length) % videos.length;
+    const video = videos[currentVideoIndex];
+    videoPlayer.pause();
+    videoPlayer.src = video.src;
+    videoPlayer.poster = video.poster;
+    videoPlayer.load();
+    $('video-dialog-title').textContent = video.title;
+    $('video-dialog-number').textContent = `VIDEO / ${videoLabel(video.number)}`;
+    if (!videoDialog.open) videoDialog.showModal();
+    // Play is initiated by a visitor's click; browsers can still block it.
+    videoPlayer.play().catch(() => {});
+}
+
+function closeVideo() {
+    videoPlayer.pause();
+    videoPlayer.removeAttribute('src');
+    videoPlayer.load();
+    if (videoDialog.open) videoDialog.close();
+}
+
+async function videoExists(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok && (response.headers.get('content-type') || '').toLowerCase().includes('video');
+    } catch {
+        return false;
+    }
+}
+
+async function discoverVideos() {
+    for (let number = 1; number <= VIDEO_MAX_AUTO; number++) {
+        let extension = null;
+        if (await videoExists(`videos/Video${number}.mp4`)) extension = 'mp4';
+        else if (await videoExists(`videos/Video${number}.webm`)) extension = 'webm';
+        if (!extension) break;
+        videos.push(buildVideo(number, extension));
+        renderVideoGallery();
+    }
+}
+
+$('video-dialog-close').addEventListener('click', closeVideo);
+$('video-prev').addEventListener('click', () => openVideo(currentVideoIndex - 1));
+$('video-next').addEventListener('click', () => openVideo(currentVideoIndex + 1));
+videoDialog.addEventListener('close', () => {
+    videoPlayer.pause();
+    videoPlayer.removeAttribute('src');
+    videoPlayer.load();
+});
+videoDialog.addEventListener('click', event => {
+    if (event.target === videoDialog) closeVideo();
+});
+$('video-search').addEventListener('input', event => {
+    videoSearchQuery = event.target.value.trim().toLowerCase();
+    renderVideoGallery();
+});
+$('video-sort').addEventListener('change', event => {
+    videoSort = event.target.value;
+    renderVideoGallery();
+});
+
+renderVideoGallery();
+void discoverVideos();
