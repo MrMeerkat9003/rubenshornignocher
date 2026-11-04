@@ -950,6 +950,7 @@ const VIDEO_MAX_AUTO = 250;
 const videoDetails = {
     // 1: { title: 'First clip', description: 'A moment on film.', poster: 'images/Ruben6.jpeg' },
     // 2: { title: 'Another clip', poster: 'images/Ruben12.jpeg' },
+   1: {title: 'Really gotta hold on', description: 'Rubens "viral" tiktok.'}
 };
 
 const videos = [];
