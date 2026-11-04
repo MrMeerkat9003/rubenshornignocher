@@ -756,7 +756,7 @@ discoverPhotos();
 // FormSubmit sends an activation email the first time the form is used.
 // Do not put secret credentials in public GitHub files.
 const PHOTO_SUBMISSION_EMAIL = 'rubenofficialwebsite@gmail.com';
-const PHOTO_UPLOAD_LIMIT = 10 * 1024 * 1024;
+const PHOTO_UPLOAD_LIMIT = 30 * 1024 * 1024;
 
 const photoForm = $('photo-submission-form');
 const photoFileInput = $('submit-image');
