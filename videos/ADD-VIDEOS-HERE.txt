@@ -1,0 +1,5 @@
+Add files named Video1.mp4, Video2.mp4, Video3.mp4, etc. to this folder.
+Only sequential names are detected. MP4 H.264/AAC is recommended. WebM is also supported.
+Edit videoDetails at the bottom of script.js for custom titles, descriptions, and poster images.
+The gallery appears automatically after publishing on GitHub Pages.
+Use clips you have permission to publish. GitHub recommends keeping files under 50 MiB and enforces a 100 MiB per-file limit for ordinary Git files. Large video libraries may require external video hosting.
