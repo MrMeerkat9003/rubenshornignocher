@@ -37,8 +37,38 @@ let shuffleOrder=[];
 function shuffle(){shuffleOrder=photos.map(p=>p.number);for(let i=shuffleOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffleOrder[i],shuffleOrder[j]]=[shuffleOrder[j],shuffleOrder[i]]}}
 function renderGallery(){const matches=visiblePhotos();const grid=$('gallery-grid');grid.replaceChildren();grid.classList.toggle('list-layout',listLayout);const fragment=document.createDocumentFragment();for(const p of matches){const card=document.createElement('article');card.className='photo-card';const open=document.createElement('button');open.className='photo-open';open.setAttribute('aria-label',`View ${p.title}`);const img=document.createElement('img');img.src=p.src;img.alt=`Ruben photograph ${p.number}: ${p.title}`;img.loading='lazy';img.decoding='async';const overlay=document.createElement('span');overlay.className='photo-overlay';const label=document.createElement('span');const type=document.createElement('small');type.textContent=`FIG. ${pad(p.number)} / ${p.category.toUpperCase()}`;const title=document.createElement('strong');title.textContent=p.title;label.append(type,title);const arrow=document.createElement('span');arrow.className='open-arrow';arrow.textContent='↗';overlay.append(label,arrow);open.append(img,overlay);open.addEventListener('click',()=>openViewer(p.number-1));const save=document.createElement('button');save.className=`save-card${isSaved(p)?' saved':''}`;save.textContent=isSaved(p)?'♥':'♡';save.setAttribute('aria-label',isSaved(p)?`Unsave photo ${p.number}`:`Save photo ${p.number}`);save.title=isSaved(p)?'Remove saved photo':'Save photo';save.addEventListener('click',()=>toggleSave(p));card.append(open,save);fragment.append(card)}grid.append(fragment);$('empty-state').hidden=matches.length!==0;$('visible-count').textContent=`Showing ${matches.length} of ${photos.length} photographs`}
 
-function setFeature(index){featureIndex=(index+photos.length)%photos.length;const p=photos[featureIndex];$('feature-img').src=p.src;$('feature-img').alt=`Ruben photo ${p.number}: ${p.title}`;$('feature-description').textContent=p.description;$('feature-counter').textContent=`${pad(p.number)} / ${pad(photos.length)}`;document.querySelectorAll('.feature-dots button').forEach((b,i)=>{b.classList.toggle('active',i===featureIndex);b.setAttribute('aria-pressed',String(i===featureIndex))})}
-function setupFeatureDots(){const holder=$('feature-dots');holder.replaceChildren();photos.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',`Show photo ${p.number}`);b.addEventListener('click',()=>setFeature(i));holder.append(b)});setFeature(featureIndex)}
+function setFeature(index) {
+  featureIndex = (index + photos.length) % photos.length;
+  const p = photos[featureIndex];
+  $('feature-img').src = p.src;
+  $('feature-img').alt = `Ruben photo ${p.number}: ${p.title}`;
+  $('feature-description').textContent = p.description;
+  $('feature-counter').textContent = `${pad(p.number)} / ${pad(photos.length)}`;
+  renderFeatureDots();
+}
+
+// Show a short, usable window of navigation dots instead of 47 tiny buttons.
+function renderFeatureDots() {
+  const holder = $('feature-dots');
+  holder.replaceChildren();
+  const count = Math.min(7, photos.length);
+  const start = Math.min(Math.max(0, featureIndex - Math.floor(count / 2)), photos.length - count);
+
+  for (let i = start; i < start + count; i++) {
+    const p = photos[i];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.classList.toggle('active', i === featureIndex);
+    button.setAttribute('aria-label', `Show photo ${p.number}`);
+    button.setAttribute('aria-pressed', String(i === featureIndex));
+    button.addEventListener('click', () => setFeature(i));
+    holder.append(button);
+  }
+}
+
+function setupFeatureDots() {
+  setFeature(featureIndex);
+}
 function nextFeature(delta){setFeature(featureIndex+delta)}
 function randomIndex(except){if(photos.length<2)return 0;let i;do{i=Math.floor(Math.random()*photos.length)}while(i===except);return i}
 
@@ -62,7 +92,7 @@ $('random-photo').addEventListener('click',()=>openViewer(randomIndex(-1)));
 document.querySelectorAll('.moment-row').forEach(button=>button.addEventListener('click',()=>openViewer(Number(button.dataset.photo))));
 $('lightbox-close').addEventListener('click',closeViewer);$('lightbox-prev').addEventListener('click',()=>stepViewer(-1));$('lightbox-next').addEventListener('click',()=>stepViewer(1));$('lightbox-save').addEventListener('click',()=>toggleSave(photos[viewerIndex]));
 $('lightbox').addEventListener('click',e=>{if(e.target===$('lightbox'))closeViewer()});
-document.addEventListener('keydown',e=>{if(!$('lightbox').open)return;if(e.key==='ArrowLeft'){e.preventDefault();stepViewer(-1)}if(e.key==='ArrowRight'){e.preventDefault();stepViewer(1)}if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey){e.preventDefault();toggleSave(photos[viewerIndex])}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape' && !$('mobile-nav').hidden){$('mobile-nav').hidden=true;$('menu-btn').setAttribute('aria-expanded','false')}if(!$('lightbox').open)return;if(e.key==='ArrowLeft'){e.preventDefault();stepViewer(-1)}if(e.key==='ArrowRight'){e.preventDefault();stepViewer(1)}if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey){e.preventDefault();toggleSave(photos[viewerIndex])}});
 let touchStart=0;$('lightbox-img').addEventListener('touchstart',e=>{touchStart=e.changedTouches[0].screenX},{passive:true});$('lightbox-img').addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-touchStart;if(Math.abs(dx)>60)stepViewer(dx<0?1:-1)},{passive:true});
 $('back-to-top').addEventListener('click',()=>scrollTo({top:0,behavior:reducedMotion?'instant':'smooth'}));
 function onScroll(){const max=document.documentElement.scrollHeight-innerHeight;$('scroll-line').style.width=`${max>0?scrollY/max*100:0}%`;$('back-to-top').classList.toggle('show',scrollY>650)}addEventListener('scroll',onScroll,{passive:true});onScroll();
@@ -77,3 +107,11 @@ updateTotals();shuffle();renderGallery();setupFeatureDots();
    but the original eight images and all page features still work. */
 async function discoverPhotos(){for(let n=48;n<=200;n++){const exists=await new Promise(resolve=>{const probe=new Image();probe.onload=()=>resolve(true);probe.onerror=()=>resolve(false);probe.src=`images/Ruben${n}.jpeg`});if(!exists)break;photos.push({number:n,title:`Photo ${pad(n)}`,category:'candid',description:'Another moment from the growing collection.',src:`images/Ruben${n}.jpeg`});updateTotals();shuffle();renderGallery();setupFeatureDots()}}
 discoverPhotos();
+
+// Close the mobile navigation if the user taps outside it.
+document.addEventListener('pointerdown', e => {
+  if (!$('mobile-nav').hidden && !e.target.closest('#mobile-nav') && !e.target.closest('#menu-btn')) {
+    $('mobile-nav').hidden = true;
+    $('menu-btn').setAttribute('aria-expanded', 'false');
+  }
+});
