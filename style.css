@@ -375,35 +375,63 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
     writing-mode: vertical-rl;
 }
 
+
+/* ========================================
+   INFINITE COLLECTION MARQUEE
+======================================== */
+
 .marquee {
+    width: 100%;
     overflow: hidden;
     background: var(--orange);
-    padding: 18px 0;
-    white-space: nowrap;
-    font-weight: 700;
     color: #1c130e;
+    padding: 18px 0;
 }
 
 .marquee-track {
+    display: flex;
     width: max-content;
-    animation: marquee 40s linear infinite;
+    animation: marquee-scroll 25s linear infinite;
+    will-change: transform;
 }
 
-.marquee-track span {
+.marquee-content {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.marquee-content span {
+    font-family: var(--mono);
     font-size: 14px;
-    letter-spacing: .16em;
-    word-spacing: 30px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    word-spacing: 25px;
 }
 
-.marquee b {
-    font-size: 20px;
-}
+@keyframes marquee-scroll {
+    from {
+        transform: translateX(0);
+    }
 
-@keyframes marquee {
     to {
         transform: translateX(-50%);
     }
 }
+
+/* Optional: Pause when hovering */
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+
+/* Respect reduced-motion settings */
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none;
+    }
+}
+
 
 @media(prefers-reduced-motion:reduce) {
     *,*:before,*:after {
