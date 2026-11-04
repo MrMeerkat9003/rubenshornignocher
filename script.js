@@ -680,7 +680,7 @@ if ('IntersectionObserver' in window && !reducedMotion) {
         { rootMargin: '-28% 0px -65% 0px' }
     );
 
-    ['home', 'story', 'collection', 'moments'].forEach(id => {
+    ['home', 'story', 'collection', 'moments', 'submit-photo'].forEach(id => {
         navObserver.observe($(id));
     });
 } else {
@@ -755,8 +755,8 @@ discoverPhotos();
 // SETUP: Replace this with the inbox that should receive the photo attachments.
 // FormSubmit sends an activation email the first time the form is used.
 // Do not put secret credentials in public GitHub files.
-const PHOTO_SUBMISSION_EMAIL = 'rubenofficialwebsite@gmail.com';
-const PHOTO_UPLOAD_LIMIT = 30 * 1024 * 1024;
+const PHOTO_SUBMISSION_EMAIL = 'REPLACE_WITH_YOUR_EMAIL@example.com';
+const PHOTO_UPLOAD_LIMIT = 10 * 1024 * 1024;
 
 const photoForm = $('photo-submission-form');
 const photoFileInput = $('submit-image');
