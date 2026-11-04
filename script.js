@@ -7,7 +7,7 @@
 
 // Photos Ruben1.jpeg–Ruben47.jpeg are included in the initial library.
 // Ruben48.jpeg and higher are detected automatically, in sequence.
-const TOTAL_PHOTOS = 47;
+const TOTAL_PHOTOS = 75;
 const MAX_AUTO_PHOTO = 2000;
 
 // Set custom names here; everything else becomes "Photo 002", etc.
@@ -757,7 +757,7 @@ discoverPhotos();
 // 3. Replace YOUR-FORM-ID below (do not paste an API key).
 // 4. Enable email notifications and test the published website.
 //    Basin emails a LINK to each uploaded photo, rather than attaching it.
-const PHOTO_SUBMISSION_ENDPOINT = 'https://usebasin.com/f/YOUR-FORM-ID';
+const PHOTO_SUBMISSION_ENDPOINT = 'https://usebasin.com/f/65d18a97d644';
 const PHOTO_UPLOAD_LIMIT = 10 * 1024 * 1024;
 
 const photoForm = $('photo-submission-form');
