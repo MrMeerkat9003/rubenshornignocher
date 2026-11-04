@@ -7,7 +7,7 @@
 
 // Photos Ruben1.jpeg–Ruben47.jpeg are included in the initial library.
 // Ruben48.jpeg and higher are detected automatically, in sequence.
-const TOTAL_PHOTOS = 75;
+const TOTAL_PHOTOS = 47;
 const MAX_AUTO_PHOTO = 2000;
 
 // Set custom names here; everything else becomes "Photo 002", etc.
@@ -746,3 +746,132 @@ shuffle();
 renderGallery();
 setupFeatureDots();
 discoverPhotos();
+
+
+/* ============================================================
+   PHOTO SUBMISSIONS — GITHUB PAGES + FORMSUBMIT
+   ============================================================ */
+
+// SETUP: Replace this with the inbox that should receive the photo attachments.
+// FormSubmit sends an activation email the first time the form is used.
+// Do not put secret credentials in public GitHub files.
+const PHOTO_SUBMISSION_EMAIL = 'REPLACE_WITH_YOUR_EMAIL@example.com';
+const PHOTO_UPLOAD_LIMIT = 10 * 1024 * 1024;
+
+const photoForm = $('photo-submission-form');
+const photoFileInput = $('submit-image');
+const photoUploadError = $('submit-error');
+const photoPreview = $('submit-preview');
+const photoPreviewImage = $('submit-preview-image');
+let photoPreviewUrl = null;
+let verifiedUpload = false;
+
+function submissionError(message) {
+    photoUploadError.textContent = message;
+    photoUploadError.hidden = !message;
+}
+
+function clearSubmissionPreview() {
+    if (photoPreviewUrl) {
+        URL.revokeObjectURL(photoPreviewUrl);
+        photoPreviewUrl = null;
+    }
+    photoPreview.hidden = true;
+    photoPreviewImage.removeAttribute('src');
+    verifiedUpload = false;
+}
+
+// Browser-side file signature checks are useful for mistakes, NOT a virus scanner.
+async function checkImageSignature(file) {
+    const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    const png = bytes.length >= 8 &&
+        [137, 80, 78, 71, 13, 10, 26, 10].every((b, i) => bytes[i] === b);
+    const jpeg = bytes.length >= 3 &&
+        bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    const webp = bytes.length >= 12 &&
+        String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' &&
+        String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP';
+
+    const allowed = {
+        'image/png': png,
+        'image/jpeg': jpeg,
+        'image/webp': webp
+    };
+    return allowed[file.type] === true;
+}
+
+async function validateSubmittedPhoto() {
+    const file = photoFileInput.files?.[0];
+    clearSubmissionPreview();
+    submissionError('');
+
+    if (!file) {
+        submissionError('Please choose a photo before sending.');
+        return false;
+    }
+    if (file.size === 0 || file.size > PHOTO_UPLOAD_LIMIT) {
+        submissionError('Please choose an image smaller than 10 MB.');
+        return false;
+    }
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
+        !/\.(jpe?g|png|webp)$/i.test(file.name) ||
+        !(await checkImageSignature(file))) {
+        submissionError('Only valid PNG, JPEG or WebP image files are supported.');
+        return false;
+    }
+
+    verifiedUpload = true;
+    photoPreviewUrl = URL.createObjectURL(file);
+    photoPreviewImage.src = photoPreviewUrl;
+    $('submit-file-name').textContent = file.name;
+    $('submit-file-size').textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+    photoPreview.hidden = false;
+    return true;
+}
+
+photoFileInput.addEventListener('change', validateSubmittedPhoto);
+$('submit-remove-image').addEventListener('click', () => {
+    photoFileInput.value = '';
+    clearSubmissionPreview();
+    submissionError('');
+});
+
+// Basic drag and drop, using the same file input and validation.
+const photoDropzone = $('submit-dropzone');
+photoDropzone.addEventListener('dragover', event => {
+    event.preventDefault();
+    photoDropzone.classList.add('drag-over');
+});
+photoDropzone.addEventListener('dragleave', () => {
+    photoDropzone.classList.remove('drag-over');
+});
+photoDropzone.addEventListener('drop', event => {
+    event.preventDefault();
+    photoDropzone.classList.remove('drag-over');
+    if (event.dataTransfer?.files?.length) {
+        photoFileInput.files = event.dataTransfer.files;
+        validateSubmittedPhoto();
+    }
+});
+
+photoForm.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    if (PHOTO_SUBMISSION_EMAIL === 'REPLACE_WITH_YOUR_EMAIL@example.com' ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(PHOTO_SUBMISSION_EMAIL)) {
+        submissionError('The website owner must configure the receiving email address before submissions can be sent.');
+        return;
+    }
+    if (!photoForm.reportValidity()) return;
+    if (!verifiedUpload && !(await validateSubmittedPhoto())) return;
+    // Re-check immediately before submission as well.
+    if (!(await validateSubmittedPhoto())) return;
+
+    photoForm.action = `https://formsubmit.co/${encodeURIComponent(PHOTO_SUBMISSION_EMAIL)}`;
+    $('submit-send').disabled = true;
+    $('submit-send').textContent = 'Opening secure submission…';
+
+    // Native multipart POST is required for FormSubmit's email attachments.
+    // The form provider will display the confirmation / CAPTCHA page.
+    photoForm.submit();
+});
