@@ -36,7 +36,7 @@
     </section>
     <section class="moments section-pad" id="moments"><div class="section-top reveal"><span>04 / BEHIND THE CAMERA</span><span>SMALL DETAILS, BIG MEMORIES</span></div><div class="moments-intro reveal"><div><span class="small-label">A FEW DIFFERENT SIDES</span><h2>In the <em>moment.</em></h2></div><p>Some photos speak for themselves. Select a moment to take a closer look.</p></div><div class="moment-list" id="moment-list"><button class="moment-row" data-photo="5"><span class="moment-num">01</span><span class="moment-name">Out and about</span><span class="moment-type">OUTDOORS</span><span class="moment-arrow">↗</span><img src="images/Ruben6.jpeg" alt="" loading="lazy"></button><button class="moment-row" data-photo="4"><span class="moment-num">02</span><span class="moment-name">The side profile</span><span class="moment-type">PORTRAIT</span><span class="moment-arrow">↗</span><img src="images/Ruben5.jpeg" alt="" loading="lazy"></button><button class="moment-row" data-photo="7"><span class="moment-num">03</span><span class="moment-name">An unexpected frame</span><span class="moment-type">CANDID</span><span class="moment-arrow">↗</span><img src="images/Ruben8.jpeg" alt="" loading="lazy"></button></div></section>
 
-    <!-- PHOTO SUBMISSIONS: set the receiving email in script.js before publishing. -->
+    <!-- PHOTO SUBMISSIONS: configure your Basin form endpoint in script.js before publishing. -->
     <section class="submit-section section-pad" id="submit-photo" aria-labelledby="submit-heading">
       <div class="section-top reveal">
         <span>05 / CONTRIBUTE</span>
@@ -54,10 +54,8 @@
           </div>
           <p class="submit-privacy">Your name, email and image will be sent to the archive owner using a third-party form provider. Only share photos you have permission to submit. Please avoid including sensitive personal information.</p>
         </div>
-        <form class="submit-form reveal" id="photo-submission-form" action="https://formsubmit.co/REPLACE_WITH_YOUR_EMAIL@example.com" method="POST" enctype="multipart/form-data">
-          <input type="hidden" name="_subject" value="New Ruben archive photo submission">
-          <input type="hidden" name="_template" value="table">
-          <input class="submit-honeypot" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <form class="submit-form reveal" id="photo-submission-form" action="https://usebasin.com/f/YOUR-FORM-ID" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+          <input class="submit-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="submit-form-header">
             <div>
               <span class="small-label">PHOTO SUBMISSION</span>
@@ -66,7 +64,7 @@
             <span>PNG · JPEG · WEBP / 10 MB MAX</span>
           </div>
           <div class="submit-form-copy">
-            <p>Fill in your details, upload one image, and it will be emailed for review before anything is added to the archive.</p>
+            <p>Fill in your details, upload one image, and you’ll receive an email notification with a link to review the uploaded photo.</p>
           </div>
           <div class="submit-form-grid">
             <div class="submit-form-main">
@@ -82,7 +80,8 @@
                 <textarea id="submit-message" name="message" maxlength="500" rows="4" placeholder="Add a short note about when the photo was taken, who sent it, or anything useful."></textarea>
               </label>
               <p class="submit-error" id="submit-error" role="alert" hidden></p>
-              <label class="submit-consent"><input id="submit-consent" type="checkbox" required> <span>I have permission to share this picture and understand it will be emailed for review. <strong>*</strong></span></label>
+              <div class="submit-status" id="submit-status" role="status" aria-live="polite" hidden></div>
+              <label class="submit-consent"><input id="submit-consent" type="checkbox" required> <span>I have permission to share this picture and understand it will be sent to the archive owner for review. <strong>*</strong></span></label>
               <button type="submit" class="btn btn-primary submit-send" id="submit-send">Send photo for review <span aria-hidden="true">↗</span></button>
               <p class="submit-footnote">Submissions are reviewed manually. Sending a photo does not guarantee it will appear on the website.</p>
             </div>
