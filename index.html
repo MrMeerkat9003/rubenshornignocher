@@ -18,10 +18,10 @@
   <div class="scroll-line" id="scroll-line" aria-hidden="true"></div>
   <header class="header" id="top">
     <a class="logo" href="#home" aria-label="Ruben, home">R<span class="logo-dot">.</span></a>
-    <nav class="desktop-nav" aria-label="Main navigation"><a href="#home" data-nav="home">Home</a><a href="#story" data-nav="story">About</a><a href="#collection" data-nav="collection">Collection</a><a href="#moments" data-nav="moments">Moments</a><a href="#submit-photo" data-nav="submit-photo">Submit</a></nav>
+    <nav class="desktop-nav" aria-label="Main navigation"><a href="#home" data-nav="home">Home</a><a href="#story" data-nav="story">About</a><a href="#collection" data-nav="collection">Collection</a><a href="#moments" data-nav="moments">Moments</a><a href="#videos" data-nav="videos">Videos</a><a href="#submit-photo" data-nav="submit-photo">Submit</a></nav>
     <div class="header-actions"><button class="icon-btn" id="theme-toggle" title="Toggle colour theme" aria-label="Toggle colour theme">◐</button><button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="mobile-nav">Menu <span aria-hidden="true">☰</span></button><a class="header-cta" href="#collection">Explore photos <span aria-hidden="true">↗</span></a></div>
   </header>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#home">Home</a><a href="#story">About</a><a href="#collection">Collection</a><a href="#moments">Moments</a><a href="#submit-photo">Submit</a></nav>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#home">Home</a><a href="#story">About</a><a href="#collection">Collection</a><a href="#moments">Moments</a><a href="#videos">Videos</a><a href="#submit-photo">Submit</a></nav>
   <main>
     <section class="hero" id="home">
       <div class="hero-copy reveal"><div class="meta-line"><span class="pulse"></span> An ongoing photo archive <span class="meta-index">EST. 2026</span></div><h1>Just<br><em>Ruben.</em></h1><p>"I fully concent to this." - Ruben, November 2026</p><div class="hero-actions"><a class="btn btn-primary" href="#collection">View the collection <span>↗</span></a><button class="btn btn-outline" id="hero-surprise">Surprise me ↗</button></div><div class="hero-foot"><span><strong id="hero-photo-count">08</strong> photographs</span><span>And counting <span class="arrow-down">↓</span></span></div></div>
@@ -36,10 +36,50 @@
     </section>
     <section class="moments section-pad" id="moments"><div class="section-top reveal"><span>04 / BEHIND THE CAMERA</span><span>SMALL DETAILS, BIG MEMORIES</span></div><div class="moments-intro reveal"><div><span class="small-label">A FEW DIFFERENT SIDES</span><h2>In the <em>moment.</em></h2></div><p>Some photos speak for themselves. Select a moment to take a closer look.</p></div><div class="moment-list" id="moment-list"><button class="moment-row" data-photo="5"><span class="moment-num">01</span><span class="moment-name">Out and about</span><span class="moment-type">OUTDOORS</span><span class="moment-arrow">↗</span><img src="images/Ruben6.jpeg" alt="" loading="lazy"></button><button class="moment-row" data-photo="4"><span class="moment-num">02</span><span class="moment-name">The side profile</span><span class="moment-type">PORTRAIT</span><span class="moment-arrow">↗</span><img src="images/Ruben5.jpeg" alt="" loading="lazy"></button><button class="moment-row" data-photo="7"><span class="moment-num">03</span><span class="moment-name">An unexpected frame</span><span class="moment-type">CANDID</span><span class="moment-arrow">↗</span><img src="images/Ruben8.jpeg" alt="" loading="lazy"></button></div></section>
 
+    <!-- VIDEO ARCHIVE: add videos/Video1.mp4, videos/Video2.mp4, etc. -->
+    <section class="videos-section section-pad" id="videos" aria-labelledby="videos-heading">
+      <div class="section-top reveal">
+        <span>05 / MOVING PICTURES</span>
+        <span>THE VIDEO ARCHIVE</span>
+      </div>
+      <div class="videos-heading reveal">
+        <div>
+          <span class="small-label">BEYOND THE PHOTOGRAPHS</span>
+          <h2 id="videos-heading">In <em>motion.</em></h2>
+          <p>Not every moment fits in a photograph. The clips live here.</p>
+        </div>
+        <div class="videos-total" aria-live="polite"><strong id="videos-count">00</strong><span>videos<br>in the archive</span></div>
+      </div>
+      <div class="videos-toolbar" id="videos-toolbar" hidden>
+        <label class="video-search-field">
+          <span aria-hidden="true">⌕</span>
+          <input id="video-search" type="search" placeholder="Search videos" aria-label="Search videos">
+        </label>
+        <select id="video-sort" aria-label="Sort videos">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+      <div class="videos-grid" id="videos-grid" aria-live="polite"></div>
+      <div class="videos-empty" id="videos-empty">
+        <div class="videos-empty-visual" aria-hidden="true">
+          <span class="videos-play-symbol">▶</span>
+          <span class="videos-empty-mark">R.</span>
+        </div>
+        <div>
+          <span class="small-label">COMING TO THE ARCHIVE</span>
+          <h3>Nothing on film. <em>Yet.</em></h3>
+          <p>Videos will appear here as they get added. Until then, there are plenty of photos to explore.</p>
+          <a href="#collection" class="text-link">Explore the photos <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <p class="videos-result" id="videos-result" hidden></p>
+    </section>
+
     <!-- PHOTO SUBMISSIONS: configure your Basin form endpoint in script.js before publishing. -->
     <section class="submit-section section-pad" id="submit-photo" aria-labelledby="submit-heading">
       <div class="section-top reveal">
-        <span>05 / CONTRIBUTE</span>
+        <span>06 / CONTRIBUTE</span>
         <span>SHARE A PHOTO</span>
       </div>
       <div class="submit-layout">
@@ -118,6 +158,13 @@
   </main>
   <footer class="footer"><a href="#top" class="logo">R<span class="logo-dot">.</span></a><span>THE RUBEN PHOTO ARCHIVE</span><span>© <span id="year"></span> · MORE TO COME</span></footer>
   <dialog class="lightbox" id="lightbox" aria-label="Photo viewer"><div class="lightbox-shell"><div class="lightbox-top"><div><span class="small-label">THE ARCHIVE</span><strong id="lightbox-counter">01 / 47</strong></div><div class="lightbox-top-actions"><button id="lightbox-save" title="Save to favourites" aria-label="Save to favourites">♡ Save</button><a id="lightbox-download" href="images/Ruben1.jpeg" download title="Download original photo">↓ Download</a><button id="lightbox-close" aria-label="Close photo viewer">✕ Close</button></div></div><div class="lightbox-stage"><button id="lightbox-prev" class="lightbox-arrow" aria-label="Previous photo">←</button><img id="lightbox-img" src="images/Ruben1.jpeg" alt="Photo" draggable="false"><button id="lightbox-next" class="lightbox-arrow" aria-label="Next photo">→</button></div><div class="lightbox-bottom"><div><strong id="lightbox-title">Photo 01</strong><span id="lightbox-category">PORTRAIT</span></div><span>← → Navigate · Esc Close · S Save</span></div></div></dialog>
+  <dialog id="video-dialog" class="video-dialog" aria-label="Video player">
+    <div class="video-dialog-shell">
+      <div class="video-dialog-top"><div><span class="small-label">NOW PLAYING / RUBEN ARCHIVE</span><strong id="video-dialog-title">Video</strong></div><button id="video-dialog-close" aria-label="Close video player">✕ Close</button></div>
+      <video id="video-player" controls playsinline preload="metadata" aria-label="Selected Ruben video"></video>
+      <div class="video-dialog-bottom"><span id="video-dialog-number">VIDEO 001</span><div><button id="video-prev" aria-label="Previous video">← Previous</button><button id="video-next" aria-label="Next video">Next →</button></div></div>
+    </div>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <button id="back-to-top" aria-label="Back to top">↑</button>
 </body>
