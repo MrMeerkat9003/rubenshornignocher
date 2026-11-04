@@ -18,10 +18,10 @@
   <div class="scroll-line" id="scroll-line" aria-hidden="true"></div>
   <header class="header" id="top">
     <a class="logo" href="#home" aria-label="Ruben, home">R<span class="logo-dot">.</span></a>
-    <nav class="desktop-nav" aria-label="Main navigation"><a href="#home" data-nav="home">Home</a><a href="#story" data-nav="story">About</a><a href="#collection" data-nav="collection">Collection</a><a href="#moments" data-nav="moments">Moments</a></nav>
+    <nav class="desktop-nav" aria-label="Main navigation"><a href="#home" data-nav="home">Home</a><a href="#story" data-nav="story">About</a><a href="#collection" data-nav="collection">Collection</a><a href="#moments" data-nav="moments">Moments</a><a href="#submit-photo" data-nav="submit-photo">Submit</a></nav>
     <div class="header-actions"><button class="icon-btn" id="theme-toggle" title="Toggle colour theme" aria-label="Toggle colour theme">◐</button><button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="mobile-nav">Menu <span aria-hidden="true">☰</span></button><a class="header-cta" href="#collection">Explore photos <span aria-hidden="true">↗</span></a></div>
   </header>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#home">Home</a><a href="#story">About</a><a href="#collection">Collection</a><a href="#moments">Moments</a></nav>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#home">Home</a><a href="#story">About</a><a href="#collection">Collection</a><a href="#moments">Moments</a><a href="#submit-photo">Submit</a></nav>
   <main>
     <section class="hero" id="home">
       <div class="hero-copy reveal"><div class="meta-line"><span class="pulse"></span> An ongoing photo archive <span class="meta-index">EST. 2026</span></div><h1>Just<br><em>Ruben.</em></h1><p>"I fully concent to this." - Ruben, November 2026</p><div class="hero-actions"><a class="btn btn-primary" href="#collection">View the collection <span>↗</span></a><button class="btn btn-outline" id="hero-surprise">Surprise me ↗</button></div><div class="hero-foot"><span><strong id="hero-photo-count">08</strong> photographs</span><span>And counting <span class="arrow-down">↓</span></span></div></div>
@@ -35,6 +35,65 @@
       <div class="gallery-grid" id="gallery-grid"></div><div class="empty-state" id="empty-state" hidden><h3>Nothing here yet.</h3><p>Try another filter or clear your search.</p><button class="btn btn-outline" id="clear-filters">Reset filters</button></div><div class="collection-footer"><span id="visible-count">Showing 47 photographs</span><button class="text-link" id="random-photo">Open a random photo ↗</button></div>
     </section>
     <section class="moments section-pad" id="moments"><div class="section-top reveal"><span>04 / BEHIND THE CAMERA</span><span>SMALL DETAILS, BIG MEMORIES</span></div><div class="moments-intro reveal"><div><span class="small-label">A FEW DIFFERENT SIDES</span><h2>In the <em>moment.</em></h2></div><p>Some photos speak for themselves. Select a moment to take a closer look.</p></div><div class="moment-list" id="moment-list"><button class="moment-row" data-photo="5"><span class="moment-num">01</span><span class="moment-name">Out and about</span><span class="moment-type">OUTDOORS</span><span class="moment-arrow">↗</span><img src="images/Ruben6.jpeg" alt="" loading="lazy"></button><button class="moment-row" data-photo="4"><span class="moment-num">02</span><span class="moment-name">The side profile</span><span class="moment-type">PORTRAIT</span><span class="moment-arrow">↗</span><img src="images/Ruben5.jpeg" alt="" loading="lazy"></button><button class="moment-row" data-photo="7"><span class="moment-num">03</span><span class="moment-name">An unexpected frame</span><span class="moment-type">CANDID</span><span class="moment-arrow">↗</span><img src="images/Ruben8.jpeg" alt="" loading="lazy"></button></div></section>
+
+    <!-- PHOTO SUBMISSIONS: set the receiving email in script.js before publishing. -->
+    <section class="submit-section section-pad" id="submit-photo" aria-labelledby="submit-heading">
+      <div class="section-top reveal">
+        <span>05 / CONTRIBUTE</span>
+        <span>SHARE A PHOTO</span>
+      </div>
+      <div class="submit-layout">
+        <div class="submit-intro reveal">
+          <span class="small-label">SUBMIT TO THE ARCHIVE</span>
+          <h2 id="submit-heading">Have a <em>photo?</em></h2>
+          <p>Got a picture that belongs in the collection? Send it over for review. Nothing is added automatically.</p>
+          <div class="submit-notes">
+            <p><span>01</span> Choose an image</p>
+            <p><span>02</span> Add your details</p>
+            <p><span>03</span> Send it for review</p>
+          </div>
+          <p class="submit-privacy">Your name, email and image will be sent to the archive owner using a third-party form provider. Only share photos you have permission to submit. Please avoid including sensitive personal information.</p>
+        </div>
+        <form class="submit-form reveal" id="photo-submission-form" action="https://formsubmit.co/REPLACE_WITH_YOUR_EMAIL@example.com" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="_subject" value="New Ruben archive photo submission">
+          <input type="hidden" name="_template" value="table">
+          <input class="submit-honeypot" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="submit-form-header">
+            <strong>Submit a photograph</strong>
+            <span>IMAGE / 10 MB MAX</span>
+          </div>
+          <div class="submit-field-row">
+            <label class="submit-field" for="submit-name">Your name <span>*</span>
+              <input id="submit-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="80" placeholder="Name" required>
+            </label>
+            <label class="submit-field" for="submit-email">Email address <span>*</span>
+              <input id="submit-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
+            </label>
+          </div>
+          <label class="submit-field" for="submit-message">Message <span class="submit-optional">OPTIONAL</span>
+            <textarea id="submit-message" name="message" maxlength="500" rows="3" placeholder="Anything you'd like us to know about the photo?"></textarea>
+          </label>
+          <label class="submit-upload" for="submit-image" id="submit-dropzone">
+            <span class="submit-upload-icon" aria-hidden="true">↥</span>
+            <strong>Choose a photo to upload</strong>
+            <span>PNG, JPEG or WebP · Maximum 10 MB</span>
+            <input id="submit-image" name="attachment" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" required>
+          </label>
+          <div class="submit-preview" id="submit-preview" hidden>
+            <img id="submit-preview-image" alt="Preview of your selected photograph">
+            <div class="submit-preview-info">
+              <strong id="submit-file-name"></strong>
+              <span id="submit-file-size"></span>
+            </div>
+            <button type="button" id="submit-remove-image" aria-label="Remove selected photograph">✕</button>
+          </div>
+          <p class="submit-error" id="submit-error" role="alert" hidden></p>
+          <label class="submit-consent"><input id="submit-consent" type="checkbox" required> <span>I have permission to share this picture and understand it will be emailed for review. <strong>*</strong></span></label>
+          <button type="submit" class="btn btn-primary submit-send" id="submit-send">Send photo for review <span aria-hidden="true">↗</span></button>
+          <p class="submit-footnote">Submissions are reviewed manually. Sending a photo does not guarantee it will appear on the website.</p>
+        </form>
+      </div>
+    </section>
     <section class="closing section-pad"><span class="small-label">MORE TO COME</span><h2>That's not<br><em>everything.</em></h2><p>The collection is ongoing. More photos will be added over time.</p><div class="closing-actions"><a class="btn btn-light" href="#collection">Back to the photos ↗</a><a class="btn btn-outline-light" href="#top">Return to top ↑</a></div><span class="closing-deco" aria-hidden="true">R.</span></section>
   </main>
   <footer class="footer"><a href="#top" class="logo">R<span class="logo-dot">.</span></a><span>THE RUBEN PHOTO ARCHIVE</span><span>© <span id="year"></span> · MORE TO COME</span></footer>
