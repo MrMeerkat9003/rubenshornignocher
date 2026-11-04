@@ -755,7 +755,7 @@ discoverPhotos();
 // SETUP: Replace this with the inbox that should receive the photo attachments.
 // FormSubmit sends an activation email the first time the form is used.
 // Do not put secret credentials in public GitHub files.
-const PHOTO_SUBMISSION_EMAIL = 'REPLACE_WITH_YOUR_EMAIL@example.com';
+const PHOTO_SUBMISSION_EMAIL = 'rubenofficialwebsite@gmail.com';
 const PHOTO_UPLOAD_LIMIT = 10 * 1024 * 1024;
 
 const photoForm = $('photo-submission-form');
