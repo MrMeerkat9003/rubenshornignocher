@@ -941,8 +941,8 @@ photoForm.addEventListener('submit', async event => {
    the repository. The site automatically checks for the next
    sequential video on each visit. Missing numbers stop detection.
 
-   Optional custom titles and poster images can be configured here.
-   A poster uses a photo already present in images/ by default.
+   By default, each preview shows a frame from the video itself.
+   Optionally, set a poster image for a specific video below.
    MP4 (H.264/AAC) is recommended for widest device support.
 */
 
@@ -969,7 +969,7 @@ function buildVideo(number, extension) {
         number,
         title: details.title || `Video ${videoLabel(number)}`,
         description: details.description || 'From the Ruben video archive.',
-        poster: details.poster || `images/Ruben${Math.min(number, 75)}.jpeg`,
+        poster: details.poster || null,
         src: `videos/Video${number}.${extension}`,
     };
 }
@@ -1001,10 +1001,36 @@ function renderVideoGallery() {
         button.setAttribute('aria-label', `Play ${video.title}`);
         const thumb = document.createElement('span');
         thumb.className = 'video-thumb';
-        const poster = document.createElement('img');
-        poster.src = video.poster;
-        poster.alt = '';
-        poster.loading = 'lazy';
+        // Use an actual frame from the video, unless a custom poster is set.
+        const poster = video.poster
+            ? document.createElement('img')
+            : document.createElement('video');
+
+        if (video.poster) {
+            poster.src = video.poster;
+            poster.alt = '';
+            poster.loading = 'lazy';
+        } else {
+            poster.className = 'video-frame-preview';
+            poster.muted = true;
+            poster.defaultMuted = true;
+            poster.playsInline = true;
+            poster.preload = 'metadata';
+            poster.setAttribute('aria-hidden', 'true');
+            poster.tabIndex = -1;
+            poster.disablePictureInPicture = true;
+            poster.src = video.src;
+
+            // A short seek encourages browsers to paint an actual video frame.
+            // This is not playback and never starts the audio.
+            poster.addEventListener('loadedmetadata', () => {
+                const duration = poster.duration;
+                const frameTime = Number.isFinite(duration)
+                    ? Math.min(0.15, Math.max(0, duration / 2))
+                    : 0.15;
+                try { poster.currentTime = frameTime; } catch {}
+            }, { once: true });
+        }
         const play = document.createElement('span');
         play.className = 'video-card-play';
         play.textContent = '▶';
@@ -1038,7 +1064,8 @@ function openVideo(index) {
     const video = videos[currentVideoIndex];
     videoPlayer.pause();
     videoPlayer.src = video.src;
-    videoPlayer.poster = video.poster;
+    if (video.poster) videoPlayer.poster = video.poster;
+    else videoPlayer.removeAttribute('poster');
     videoPlayer.load();
     $('video-dialog-title').textContent = video.title;
     $('video-dialog-number').textContent = `VIDEO / ${videoLabel(video.number)}`;
