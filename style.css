@@ -2132,3 +2132,20 @@ img { max-width: 100%; }
         min-height: 52px;
     }
 }
+
+/* Inline submission feedback (stays on this page) */
+.submit-status {
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 13px;
+}
+.submit-status[data-type="success"] {
+    border-color: var(--orange);
+    background: color-mix(in srgb, var(--orange) 9%, var(--panel));
+}
+.submit-status[hidden] { display: none; }
+.submit-send:disabled { cursor: wait; opacity: .65; }
