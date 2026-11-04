@@ -749,26 +749,39 @@ discoverPhotos();
 
 
 /* ============================================================
-   PHOTO SUBMISSIONS — GITHUB PAGES + FORMSUBMIT
+   PHOTO SUBMISSIONS — GITHUB PAGES + BASIN
    ============================================================ */
 
-// SETUP: Replace this with the inbox that should receive the photo attachments.
-// FormSubmit sends an activation email the first time the form is used.
-// Do not put secret credentials in public GitHub files.
-const PHOTO_SUBMISSION_EMAIL = 'rubenofficialwebsite@gmail.com';
+// 1. Create a free form at https://usebasin.com/
+// 2. Copy the form's public endpoint URL from the Basin dashboard.
+// 3. Replace YOUR-FORM-ID below (do not paste an API key).
+// 4. Enable email notifications and test the published website.
+//    Basin emails a LINK to each uploaded photo, rather than attaching it.
+const PHOTO_SUBMISSION_ENDPOINT = 'https://usebasin.com/f/YOUR-FORM-ID';
 const PHOTO_UPLOAD_LIMIT = 10 * 1024 * 1024;
 
 const photoForm = $('photo-submission-form');
 const photoFileInput = $('submit-image');
 const photoUploadError = $('submit-error');
+const photoStatus = $('submit-status');
 const photoPreview = $('submit-preview');
 const photoPreviewImage = $('submit-preview-image');
+const photoSendButton = $('submit-send');
+const photoSendButtonHtml = photoSendButton.innerHTML;
+
 let photoPreviewUrl = null;
 let verifiedUpload = false;
+let photoSending = false;
 
 function submissionError(message) {
     photoUploadError.textContent = message;
     photoUploadError.hidden = !message;
+}
+
+function setSubmissionStatus(message, type = 'info') {
+    photoStatus.textContent = message;
+    photoStatus.dataset.type = type;
+    photoStatus.hidden = !message;
 }
 
 function clearSubmissionPreview() {
@@ -776,12 +789,14 @@ function clearSubmissionPreview() {
         URL.revokeObjectURL(photoPreviewUrl);
         photoPreviewUrl = null;
     }
+
     photoPreview.hidden = true;
     photoPreviewImage.removeAttribute('src');
     verifiedUpload = false;
 }
 
-// Browser-side file signature checks are useful for mistakes, NOT a virus scanner.
+// Browser validation catches mistakes, but is NOT a malware scanner.
+// Basin scans files on its servers; still review any uploaded files carefully.
 async function checkImageSignature(file) {
     const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
     const png = bytes.length >= 8 &&
@@ -792,27 +807,29 @@ async function checkImageSignature(file) {
         String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' &&
         String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP';
 
-    const allowed = {
+    return {
         'image/png': png,
         'image/jpeg': jpeg,
-        'image/webp': webp
-    };
-    return allowed[file.type] === true;
+        'image/webp': webp,
+    }[file.type] === true;
 }
 
 async function validateSubmittedPhoto() {
     const file = photoFileInput.files?.[0];
     clearSubmissionPreview();
     submissionError('');
+    setSubmissionStatus('');
 
     if (!file) {
         submissionError('Please choose a photo before sending.');
         return false;
     }
+
     if (file.size === 0 || file.size > PHOTO_UPLOAD_LIMIT) {
-        submissionError('Please choose an image smaller than 10 MB.');
+        submissionError('Choose a photo larger than 0 bytes and no bigger than 10 MB.');
         return false;
     }
+
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
         !/\.(jpe?g|png|webp)$/i.test(file.name) ||
         !(await checkImageSignature(file))) {
@@ -829,49 +846,88 @@ async function validateSubmittedPhoto() {
     return true;
 }
 
-photoFileInput.addEventListener('change', validateSubmittedPhoto);
+photoFileInput.addEventListener('change', () => {
+    void validateSubmittedPhoto();
+});
+
 $('submit-remove-image').addEventListener('click', () => {
     photoFileInput.value = '';
     clearSubmissionPreview();
     submissionError('');
+    setSubmissionStatus('');
 });
 
-// Basic drag and drop, using the same file input and validation.
+// Drop photos from a desktop file manager onto the upload area.
 const photoDropzone = $('submit-dropzone');
 photoDropzone.addEventListener('dragover', event => {
     event.preventDefault();
     photoDropzone.classList.add('drag-over');
 });
+
 photoDropzone.addEventListener('dragleave', () => {
     photoDropzone.classList.remove('drag-over');
 });
+
 photoDropzone.addEventListener('drop', event => {
     event.preventDefault();
     photoDropzone.classList.remove('drag-over');
+
     if (event.dataTransfer?.files?.length) {
         photoFileInput.files = event.dataTransfer.files;
-        validateSubmittedPhoto();
+        void validateSubmittedPhoto();
     }
 });
 
 photoForm.addEventListener('submit', async event => {
     event.preventDefault();
+    if (photoSending) return;
 
-    if (PHOTO_SUBMISSION_EMAIL === 'REPLACE_WITH_YOUR_EMAIL@example.com' ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(PHOTO_SUBMISSION_EMAIL)) {
-        submissionError('The website owner must configure the receiving email address before submissions can be sent.');
+    submissionError('');
+    setSubmissionStatus('');
+
+    if (!/^https:\/\/usebasin\.com\/f\/[a-zA-Z0-9_-]+$/.test(PHOTO_SUBMISSION_ENDPOINT) ||
+        PHOTO_SUBMISSION_ENDPOINT.endsWith('/YOUR-FORM-ID')) {
+        submissionError('The website owner needs to connect a Basin submission endpoint first.');
         return;
     }
+
     if (!photoForm.reportValidity()) return;
-    if (!verifiedUpload && !(await validateSubmittedPhoto())) return;
-    // Re-check immediately before submission as well.
-    if (!(await validateSubmittedPhoto())) return;
+    if (!await validateSubmittedPhoto()) return;
 
-    photoForm.action = `https://formsubmit.co/${encodeURIComponent(PHOTO_SUBMISSION_EMAIL)}`;
-    $('submit-send').disabled = true;
-    $('submit-send').textContent = 'Opening secure submission…';
+    photoSending = true;
+    photoSendButton.disabled = true;
+    photoSendButton.textContent = 'Sending photograph…';
+    setSubmissionStatus('Uploading your image securely. Please keep this page open.');
 
-    // Native multipart POST is required for FormSubmit's email attachments.
-    // The form provider will display the confirmation / CAPTCHA page.
-    photoForm.submit();
+    try {
+        // FormData is required to transmit the real image bytes.
+        // Do not set a Content-Type header: the browser adds the multipart boundary.
+        const response = await fetch(PHOTO_SUBMISSION_ENDPOINT, {
+            method: 'POST',
+            body: new FormData(photoForm),
+            headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) {
+            let detail = '';
+            try {
+                const data = await response.json();
+                detail = typeof data.error === 'string' ? ` ${data.error}` : '';
+            } catch {}
+            throw new Error(`Submission service returned HTTP ${response.status}.${detail}`);
+        }
+
+        // Only report success when the server has accepted the request.
+        setSubmissionStatus('Photo received. Thank you! It has been submitted for review.', 'success');
+        photoForm.reset();
+        clearSubmissionPreview();
+    } catch (error) {
+        console.error('Photo submission failed:', error);
+        submissionError('Your photo could not be submitted. Please try again later. If it continues, contact the archive owner.');
+        setSubmissionStatus('');
+    } finally {
+        photoSending = false;
+        photoSendButton.disabled = false;
+        photoSendButton.innerHTML = photoSendButtonHtml;
+    }
 });
