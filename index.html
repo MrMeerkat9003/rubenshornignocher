@@ -59,38 +59,59 @@
           <input type="hidden" name="_template" value="table">
           <input class="submit-honeypot" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="submit-form-header">
-            <strong>Submit a photograph</strong>
-            <span>IMAGE / 10 MB MAX</span>
-          </div>
-          <div class="submit-field-row">
-            <label class="submit-field" for="submit-name">Your name <span>*</span>
-              <input id="submit-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="80" placeholder="Name" required>
-            </label>
-            <label class="submit-field" for="submit-email">Email address <span>*</span>
-              <input id="submit-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
-            </label>
-          </div>
-          <label class="submit-field" for="submit-message">Message <span class="submit-optional">OPTIONAL</span>
-            <textarea id="submit-message" name="message" maxlength="500" rows="3" placeholder="Anything you'd like us to know about the photo?"></textarea>
-          </label>
-          <label class="submit-upload" for="submit-image" id="submit-dropzone">
-            <span class="submit-upload-icon" aria-hidden="true">↥</span>
-            <strong>Choose a photo to upload</strong>
-            <span>PNG, JPEG or WebP · Maximum 10 MB</span>
-            <input id="submit-image" name="attachment" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" required>
-          </label>
-          <div class="submit-preview" id="submit-preview" hidden>
-            <img id="submit-preview-image" alt="Preview of your selected photograph">
-            <div class="submit-preview-info">
-              <strong id="submit-file-name"></strong>
-              <span id="submit-file-size"></span>
+            <div>
+              <span class="small-label">PHOTO SUBMISSION</span>
+              <strong>Send a photo for review</strong>
             </div>
-            <button type="button" id="submit-remove-image" aria-label="Remove selected photograph">✕</button>
+            <span>PNG · JPEG · WEBP / 10 MB MAX</span>
           </div>
-          <p class="submit-error" id="submit-error" role="alert" hidden></p>
-          <label class="submit-consent"><input id="submit-consent" type="checkbox" required> <span>I have permission to share this picture and understand it will be emailed for review. <strong>*</strong></span></label>
-          <button type="submit" class="btn btn-primary submit-send" id="submit-send">Send photo for review <span aria-hidden="true">↗</span></button>
-          <p class="submit-footnote">Submissions are reviewed manually. Sending a photo does not guarantee it will appear on the website.</p>
+          <div class="submit-form-copy">
+            <p>Fill in your details, upload one image, and it will be emailed for review before anything is added to the archive.</p>
+          </div>
+          <div class="submit-form-grid">
+            <div class="submit-form-main">
+              <div class="submit-field-row">
+                <label class="submit-field" for="submit-name">Your name <span>*</span>
+                  <input id="submit-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="80" placeholder="Your name" required>
+                </label>
+                <label class="submit-field" for="submit-email">Email address <span>*</span>
+                  <input id="submit-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
+                </label>
+              </div>
+              <label class="submit-field" for="submit-message">Message <span class="submit-optional">OPTIONAL</span>
+                <textarea id="submit-message" name="message" maxlength="500" rows="4" placeholder="Add a short note about when the photo was taken, who sent it, or anything useful."></textarea>
+              </label>
+              <p class="submit-error" id="submit-error" role="alert" hidden></p>
+              <label class="submit-consent"><input id="submit-consent" type="checkbox" required> <span>I have permission to share this picture and understand it will be emailed for review. <strong>*</strong></span></label>
+              <button type="submit" class="btn btn-primary submit-send" id="submit-send">Send photo for review <span aria-hidden="true">↗</span></button>
+              <p class="submit-footnote">Submissions are reviewed manually. Sending a photo does not guarantee it will appear on the website.</p>
+            </div>
+            <div class="submit-form-side">
+              <label class="submit-upload" for="submit-image" id="submit-dropzone">
+                <span class="submit-upload-icon" aria-hidden="true">↥</span>
+                <strong>Upload a photograph</strong>
+                <span>Click to choose a file or drag and drop it here.</span>
+                <span class="submit-upload-meta">Accepted formats: PNG, JPEG, WebP · Max size: 10 MB</span>
+                <input id="submit-image" name="attachment" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" required>
+              </label>
+              <div class="submit-preview" id="submit-preview" hidden>
+                <img id="submit-preview-image" alt="Preview of your selected photograph">
+                <div class="submit-preview-info">
+                  <strong id="submit-file-name"></strong>
+                  <span id="submit-file-size"></span>
+                </div>
+                <button type="button" id="submit-remove-image" aria-label="Remove selected photograph">✕</button>
+              </div>
+              <div class="submit-side-note">
+                <strong>Before you send</strong>
+                <ul>
+                  <li>Only submit photos you have permission to share.</li>
+                  <li>A name and email are required in case follow-up is needed.</li>
+                  <li>One image per submission keeps review simple.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
     </section>
